@@ -16,7 +16,9 @@ verifier(int cond, char *s)
 int
 evaluer_expr(Expression *e, unsigned char mode)
 {
-  waitpid(-1, NULL, WNOHANG); // On élimine un zombie, non bloquant, si on a pas de zombie à eliminer on continue 
+  waitpid(-1, NULL, WNOHANG); // On élimine un zombie, non bloquant, si on a pas de zombie à eliminer on continue
+  if(e == NULL)
+    return; 
   switch(e->type)
   {
     case SIMPLE: // Execution d'une commande simple
