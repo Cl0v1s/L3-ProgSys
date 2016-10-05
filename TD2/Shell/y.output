@@ -1,0 +1,415 @@
+   0  $accept : lignecommande $end
+
+   1  lignecommande : expression_ou_rien '\n'
+   2                | error '\n'
+
+   3  expression_ou_rien :
+   4                     | expression
+
+   5  expression : commande
+   6             | expression ';' expression
+   7             | expression ET expression
+   8             | expression OU expression
+   9             | expression '|' expression
+  10             | expression IN fichier
+  11             | expression OUT fichier
+  12             | expression ERR fichier
+  13             | expression ERR_OUT fichier
+  14             | expression OUT_APPEND fichier
+  15             | expression '&'
+  16             | '(' expression ')'
+
+  17  fichier : IDENTIFICATEUR
+
+  18  commande : IDENTIFICATEUR
+  19           | commande IDENTIFICATEUR
+
+state 0
+	$accept : . lignecommande $end  (0)
+	expression_ou_rien : .  (3)
+
+	error  shift 1
+	IDENTIFICATEUR  shift 2
+	'('  shift 3
+	'\n'  reduce 3
+
+	lignecommande  goto 4
+	expression_ou_rien  goto 5
+	expression  goto 6
+	commande  goto 7
+
+
+state 1
+	lignecommande : error . '\n'  (2)
+
+	'\n'  shift 8
+	.  error
+
+
+state 2
+	commande : IDENTIFICATEUR .  (18)
+
+	.  reduce 18
+
+
+state 3
+	expression : '(' . expression ')'  (16)
+
+	IDENTIFICATEUR  shift 2
+	'('  shift 3
+	.  error
+
+	expression  goto 9
+	commande  goto 7
+
+
+state 4
+	$accept : lignecommande . $end  (0)
+
+	$end  accept
+
+
+state 5
+	lignecommande : expression_ou_rien . '\n'  (1)
+
+	'\n'  shift 10
+	.  error
+
+
+state 6
+	expression_ou_rien : expression .  (4)
+	expression : expression . ';' expression  (6)
+	expression : expression . ET expression  (7)
+	expression : expression . OU expression  (8)
+	expression : expression . '|' expression  (9)
+	expression : expression . IN fichier  (10)
+	expression : expression . OUT fichier  (11)
+	expression : expression . ERR fichier  (12)
+	expression : expression . ERR_OUT fichier  (13)
+	expression : expression . OUT_APPEND fichier  (14)
+	expression : expression . '&'  (15)
+
+	'&'  shift 11
+	';'  shift 12
+	ET  shift 13
+	OU  shift 14
+	'|'  shift 15
+	IN  shift 16
+	OUT  shift 17
+	OUT_APPEND  shift 18
+	ERR  shift 19
+	ERR_OUT  shift 20
+	'\n'  reduce 4
+
+
+state 7
+	expression : commande .  (5)
+	commande : commande . IDENTIFICATEUR  (19)
+
+	IDENTIFICATEUR  shift 21
+	'&'  reduce 5
+	';'  reduce 5
+	ET  reduce 5
+	OU  reduce 5
+	'|'  reduce 5
+	IN  reduce 5
+	OUT  reduce 5
+	OUT_APPEND  reduce 5
+	ERR  reduce 5
+	ERR_OUT  reduce 5
+	'\n'  reduce 5
+	')'  reduce 5
+
+
+state 8
+	lignecommande : error '\n' .  (2)
+
+	.  reduce 2
+
+
+state 9
+	expression : expression . ';' expression  (6)
+	expression : expression . ET expression  (7)
+	expression : expression . OU expression  (8)
+	expression : expression . '|' expression  (9)
+	expression : expression . IN fichier  (10)
+	expression : expression . OUT fichier  (11)
+	expression : expression . ERR fichier  (12)
+	expression : expression . ERR_OUT fichier  (13)
+	expression : expression . OUT_APPEND fichier  (14)
+	expression : expression . '&'  (15)
+	expression : '(' expression . ')'  (16)
+
+	'&'  shift 11
+	';'  shift 12
+	ET  shift 13
+	OU  shift 14
+	'|'  shift 15
+	IN  shift 16
+	OUT  shift 17
+	OUT_APPEND  shift 18
+	ERR  shift 19
+	ERR_OUT  shift 20
+	')'  shift 22
+	.  error
+
+
+state 10
+	lignecommande : expression_ou_rien '\n' .  (1)
+
+	.  reduce 1
+
+
+state 11
+	expression : expression '&' .  (15)
+
+	.  reduce 15
+
+
+state 12
+	expression : expression ';' . expression  (6)
+
+	IDENTIFICATEUR  shift 2
+	'('  shift 3
+	.  error
+
+	expression  goto 23
+	commande  goto 7
+
+
+state 13
+	expression : expression ET . expression  (7)
+
+	IDENTIFICATEUR  shift 2
+	'('  shift 3
+	.  error
+
+	expression  goto 24
+	commande  goto 7
+
+
+state 14
+	expression : expression OU . expression  (8)
+
+	IDENTIFICATEUR  shift 2
+	'('  shift 3
+	.  error
+
+	expression  goto 25
+	commande  goto 7
+
+
+state 15
+	expression : expression '|' . expression  (9)
+
+	IDENTIFICATEUR  shift 2
+	'('  shift 3
+	.  error
+
+	expression  goto 26
+	commande  goto 7
+
+
+state 16
+	expression : expression IN . fichier  (10)
+
+	IDENTIFICATEUR  shift 27
+	.  error
+
+	fichier  goto 28
+
+
+state 17
+	expression : expression OUT . fichier  (11)
+
+	IDENTIFICATEUR  shift 27
+	.  error
+
+	fichier  goto 29
+
+
+state 18
+	expression : expression OUT_APPEND . fichier  (14)
+
+	IDENTIFICATEUR  shift 27
+	.  error
+
+	fichier  goto 30
+
+
+state 19
+	expression : expression ERR . fichier  (12)
+
+	IDENTIFICATEUR  shift 27
+	.  error
+
+	fichier  goto 31
+
+
+state 20
+	expression : expression ERR_OUT . fichier  (13)
+
+	IDENTIFICATEUR  shift 27
+	.  error
+
+	fichier  goto 32
+
+
+state 21
+	commande : commande IDENTIFICATEUR .  (19)
+
+	.  reduce 19
+
+
+state 22
+	expression : '(' expression ')' .  (16)
+
+	.  reduce 16
+
+
+state 23
+	expression : expression . ';' expression  (6)
+	expression : expression ';' expression .  (6)
+	expression : expression . ET expression  (7)
+	expression : expression . OU expression  (8)
+	expression : expression . '|' expression  (9)
+	expression : expression . IN fichier  (10)
+	expression : expression . OUT fichier  (11)
+	expression : expression . ERR fichier  (12)
+	expression : expression . ERR_OUT fichier  (13)
+	expression : expression . OUT_APPEND fichier  (14)
+	expression : expression . '&'  (15)
+
+	'|'  shift 15
+	IN  shift 16
+	OUT  shift 17
+	OUT_APPEND  shift 18
+	ERR  shift 19
+	ERR_OUT  shift 20
+	'&'  reduce 6
+	';'  reduce 6
+	ET  reduce 6
+	OU  reduce 6
+	'\n'  reduce 6
+	')'  reduce 6
+
+
+state 24
+	expression : expression . ';' expression  (6)
+	expression : expression . ET expression  (7)
+	expression : expression ET expression .  (7)
+	expression : expression . OU expression  (8)
+	expression : expression . '|' expression  (9)
+	expression : expression . IN fichier  (10)
+	expression : expression . OUT fichier  (11)
+	expression : expression . ERR fichier  (12)
+	expression : expression . ERR_OUT fichier  (13)
+	expression : expression . OUT_APPEND fichier  (14)
+	expression : expression . '&'  (15)
+
+	'|'  shift 15
+	IN  shift 16
+	OUT  shift 17
+	OUT_APPEND  shift 18
+	ERR  shift 19
+	ERR_OUT  shift 20
+	'&'  reduce 7
+	';'  reduce 7
+	ET  reduce 7
+	OU  reduce 7
+	'\n'  reduce 7
+	')'  reduce 7
+
+
+state 25
+	expression : expression . ';' expression  (6)
+	expression : expression . ET expression  (7)
+	expression : expression . OU expression  (8)
+	expression : expression OU expression .  (8)
+	expression : expression . '|' expression  (9)
+	expression : expression . IN fichier  (10)
+	expression : expression . OUT fichier  (11)
+	expression : expression . ERR fichier  (12)
+	expression : expression . ERR_OUT fichier  (13)
+	expression : expression . OUT_APPEND fichier  (14)
+	expression : expression . '&'  (15)
+
+	'|'  shift 15
+	IN  shift 16
+	OUT  shift 17
+	OUT_APPEND  shift 18
+	ERR  shift 19
+	ERR_OUT  shift 20
+	'&'  reduce 8
+	';'  reduce 8
+	ET  reduce 8
+	OU  reduce 8
+	'\n'  reduce 8
+	')'  reduce 8
+
+
+state 26
+	expression : expression . ';' expression  (6)
+	expression : expression . ET expression  (7)
+	expression : expression . OU expression  (8)
+	expression : expression . '|' expression  (9)
+	expression : expression '|' expression .  (9)
+	expression : expression . IN fichier  (10)
+	expression : expression . OUT fichier  (11)
+	expression : expression . ERR fichier  (12)
+	expression : expression . ERR_OUT fichier  (13)
+	expression : expression . OUT_APPEND fichier  (14)
+	expression : expression . '&'  (15)
+
+	IN  shift 16
+	OUT  shift 17
+	OUT_APPEND  shift 18
+	ERR  shift 19
+	ERR_OUT  shift 20
+	'&'  reduce 9
+	';'  reduce 9
+	ET  reduce 9
+	OU  reduce 9
+	'|'  reduce 9
+	'\n'  reduce 9
+	')'  reduce 9
+
+
+state 27
+	fichier : IDENTIFICATEUR .  (17)
+
+	.  reduce 17
+
+
+state 28
+	expression : expression IN fichier .  (10)
+
+	.  reduce 10
+
+
+state 29
+	expression : expression OUT fichier .  (11)
+
+	.  reduce 11
+
+
+state 30
+	expression : expression OUT_APPEND fichier .  (14)
+
+	.  reduce 14
+
+
+state 31
+	expression : expression ERR fichier .  (12)
+
+	.  reduce 12
+
+
+state 32
+	expression : expression ERR_OUT fichier .  (13)
+
+	.  reduce 13
+
+
+16 terminals, 6 nonterminals
+20 grammar rules, 33 states
