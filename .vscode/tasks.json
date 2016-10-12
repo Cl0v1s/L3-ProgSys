@@ -4,6 +4,6 @@
     "version": "0.1.0",
     "command": "gcc",
     "isShellCommand": true,
-    "args": ["${file}", "-o", "${file}.bin"],
-    "showOutput": "always"
+    "args": ["-std=c99","${file}", "-o", "${file}.bin"],
+    "showOutput" :"silent"
 }
