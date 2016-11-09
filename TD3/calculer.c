@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <fcntl.h>
 #include <stdio.h>
+#include <libio.h>
 #include <sys/wait.h>
 #include <unistd.h>
 #include <stdio.h>
@@ -16,7 +17,7 @@ double f1(double a)
 }
 double f2(double a)
 {
-    return a-1;
+    return a-2;
 }
 double f3(double a)
 {
@@ -38,41 +39,26 @@ int main(int argc, char** argv)
     char* inputname = argv[1];
     char* outputname = argv[2];
 
-    pipe(fd);    
-
-    // Initialisation de la chaine de valeurs dans le pipe
-    printf("INIT\n");
-    int input = open(inputname, O_RDONLY);
-    while(read(input, &data, sizeof(double)) > 0)
-    {
-        printf("%f\n", data);
-        write(fd[1], &data, sizeof(double));
-    }
-
 
     // Lancement de la chaine 
     printf("CHAIN\n");
     for(int i = 0; i != N; i++)
     {
+        pipe(fd);
+        dup2(fd[0], 0);
+        data = 1;
+        
         fk = fork();
         if(fk == 0)
         {
-
-            input = dup(fd[0]); // Création nouvelle entrée pour lire 
             close(fd[0]);
-
-            while(read(input, &data, sizeof(double)) > 0)
-            {
-                printf("b: %f\n", data);
-                data = g[i](data);
-                printf("a: %f\n", data);
-                write(fd[1], &data, sizeof(double));
-            }
-            close(input);
+            write(fd[1], &data, sizeof(double));
             close(fd[1]);
+            exit(0);
         }
         wait(NULL);
     }
+
 
 
 }
