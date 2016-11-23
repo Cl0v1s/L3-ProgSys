@@ -14,9 +14,12 @@ const unsigned long MAX = 100 * 1000;
 void *for_en_parallele(void *p)
 {
   secure_int *data = p;
-  pthread_mutex_lock(&(data->mutex));
+  int snap = 0;
   for(unsigned long i=0; i < MAX; i++)
-    data->value++;
+    snap++;
+
+  pthread_mutex_lock(&(data->mutex));
+  data->value+= snap;
   pthread_mutex_unlock(&(data->mutex));
 
 
